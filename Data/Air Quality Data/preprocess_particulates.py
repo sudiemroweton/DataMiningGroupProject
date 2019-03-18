@@ -12,32 +12,33 @@ def main():
     filtered_pm2_data = []
     filtered_pm10_data = []
     filtered_s02_data = []
+    f4 = open("C:/Users/Wasif/gapsfound.txt", "w")
 
-    year_start = 1995
-    year_end = 2015
+    year_start = 1988
+    year_end = 2008
 
     co_data = read_particulate_directory("CO", year_start, year_end)
-    filtered_co_data = filter_data(co_data, year_start, year_end)
+    filtered_co_data = filter_data(co_data, year_start, year_end, f4)
     write_filtered_data_to_file(filtered_co_data, year_start, year_end)
 
     no2_data = read_particulate_directory("NO2", year_start, year_end)
-    filtered_no2_data = filter_data(no2_data, year_start, year_end)
+    filtered_no2_data = filter_data(no2_data, year_start, year_end, f4)
     write_filtered_data_to_file(filtered_no2_data, year_start, year_end)
 
     ozone_data = read_particulate_directory("OZONE", year_start, year_end)
-    filtered_ozone_data = filter_data(ozone_data, year_start, year_end)
+    filtered_ozone_data = filter_data(ozone_data, year_start, year_end, f4)
     write_filtered_data_to_file(filtered_ozone_data, year_start, year_end)
 
     pm2_data = read_particulate_directory("PM2.5", year_start, year_end)
-    filtered_pm2_data = filter_data(pm2_data, year_start, year_end)
+    filtered_pm2_data = filter_data(pm2_data, year_start, year_end, f4)
     write_filtered_data_to_file(filtered_pm2_data, year_start, year_end)
 
     pm10_data = read_particulate_directory("PM10", year_start, year_end)
-    filtered_pm10_data = filter_data(pm10_data, year_start, year_end)
+    filtered_pm10_data = filter_data(pm10_data, year_start, year_end, f4)
     write_filtered_data_to_file(filtered_pm10_data, year_start, year_end)
 
     so2_data = read_particulate_directory("SO2", year_start, year_end)
-    filtered_s02_data = filter_data(so2_data, year_start, year_end)
+    filtered_s02_data = filter_data(so2_data, year_start, year_end, f4)
     write_filtered_data_to_file(filtered_s02_data, year_start, year_end)
 
     # read_particulate_directory("NO2", 1980, 2016)
@@ -47,6 +48,8 @@ def main():
     # read_particulate_directory("SO2", 1980, 2016)
 
     print(list(co_data[0][2])[0])
+
+    f4.close()
 
     return
 
@@ -84,7 +87,7 @@ def write_filtered_data_to_file(data_point, year_start, year_end):
     return
 
 
-def filter_data(data_points, year_start, year_end):
+def filter_data(data_points, year_start, year_end, file_out):
     filtered_data_points = []
     deleted_data_points = []
     number_of_years = year_end - year_start + 1
@@ -127,6 +130,15 @@ def filter_data(data_points, year_start, year_end):
     for point in filtered_data_points:
         f.write(str(point) + "\n")
     f.close()
+
+    gap_counter = 0
+    for point in filtered_data_points:
+        if len(point[2]) < number_of_years:
+            print("GAP FOR " + str(point))
+            gap_counter += 1
+
+
+    file_out.write(("GAPS FOUND for " + str(data_points[0][1]) + " = " + str(gap_counter)) + "\n")
 
     return filtered_data_points
 
